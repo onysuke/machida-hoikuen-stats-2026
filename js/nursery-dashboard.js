@@ -231,9 +231,12 @@ class NurseryDashboard {
     // スクロール位置に応じてボタンの表示/非表示を切り替え
     const toggleButtonVisibility = () => {
       const mapRect = mapContainer.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
 
-      // 地図が画面外（下にスクロールしている）にある場合にボタンを表示
-      if (mapRect.bottom < 0) {
+      // 地図の上端が画面の上端より上にある場合（地図が少しでもスクロールアウトしたら）ボタンを表示
+      // ただし、画面の高さの30%以上スクロールアウトしたらボタンを表示
+      const scrollThreshold = windowHeight * 0.3;
+      if (mapRect.top < -scrollThreshold) {
         scrollToMapBtn.classList.add('visible');
       } else {
         scrollToMapBtn.classList.remove('visible');
@@ -1064,7 +1067,7 @@ class NurseryDashboard {
         <div class="map-popup-info">総応募: ${facility.totalApplied}名 · 内定: ${facility.totalAccepted}名</div>
         <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
           <button class="map-popup-detail-btn" onclick="event.stopPropagation(); nurseryDashboard.scrollToNurseryFromMap(${facility.id})">
-            カードで詳細をみる
+            カード一覧で見る
           </button>
           ${homepage ? `<a href="${homepage}" target="_blank" rel="noopener noreferrer" class="map-popup-link">ホームページ</a>` : ''}
         </div>
