@@ -611,8 +611,25 @@ section h3 {
 .ranking-value {
     font-size: 28px;
     font-weight: 800;
-    color: var(--primary-color);
+    color: var(--text-primary);
     margin-left: 24px;
+}
+
+/* ランキングの倍率の色分け */
+.ranking-value.ratio-low {
+    color: var(--accent-mint); /* 緑: 低倍率 */
+}
+
+.ranking-value.ratio-medium {
+    color: var(--accent-peach); /* オレンジ: 中倍率 */
+}
+
+.ranking-value.ratio-high {
+    color: var(--primary-color); /* ピンク: 高倍率 */
+}
+
+.ranking-value.ratio-infinite {
+    color: #9333EA; /* 紫: 無限大 */
 }
 
 /* もっと見るボタン */
@@ -1046,8 +1063,23 @@ section h3 {
 }
 
 .age-ratio {
-    color: var(--primary-color);
+    color: var(--accent-mint); /* デフォルトは緑（低倍率） */
     font-weight: 800;
+}
+
+/* 中倍率 (1.5倍以上) */
+.age-item.ratio-medium .age-ratio {
+    color: var(--accent-peach) !important; /* オレンジ系 */
+}
+
+/* 高倍率 (3倍以上) */
+.age-item.ratio-high .age-ratio {
+    color: var(--primary-color) !important; /* ピンク系 */
+}
+
+/* 無限大 (データなし) */
+.age-item.ratio-infinite .age-ratio {
+    color: #9333EA !important; /* 紫色 */
 }
 
 /* フッター */

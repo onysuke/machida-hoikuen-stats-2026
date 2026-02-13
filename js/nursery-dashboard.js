@@ -713,11 +713,26 @@ class NurseryDashboard {
     if (!container) return;
 
     container.innerHTML = displayItems.map((facility, index) => {
-      let value, unit;
+      let value, unit, ratioClass = '';
       switch (type) {
         case 'ratio':
           value = facility.overallRatio === 999 ? '∞' : facility.overallRatio;
           unit = '倍';
+          // 倍率に応じてクラスを決定
+          if (facility.overallRatio === 999) {
+            ratioClass = 'ratio-infinite';
+          } else {
+            const ratioNum = parseFloat(facility.overallRatio);
+            if (!isNaN(ratioNum)) {
+              if (ratioNum >= 3) {
+                ratioClass = 'ratio-high';
+              } else if (ratioNum >= 1.5) {
+                ratioClass = 'ratio-medium';
+              } else {
+                ratioClass = 'ratio-low';
+              }
+            }
+          }
           break;
         case 'applied':
           value = facility.totalApplied;
@@ -738,7 +753,7 @@ class NurseryDashboard {
               ${facility.region} · ${facility.facilityType}
             </div>
           </div>
-          <div class="ranking-value">${value}${unit}</div>
+          <div class="ranking-value ${ratioClass}">${value}${unit}</div>
         </div>
       `;
     }).join('');
@@ -1139,8 +1154,22 @@ class NurseryDashboard {
         <div class="age-breakdown">
           <h4>年齢別状況</h4>
           <div class="age-grid">
-            ${facility.ageData.map(ad => `
-              <div class="age-item ${ageFilter && ad.age === `${ageFilter}歳` ? 'highlight' : ''}">
+            ${facility.ageData.map(ad => {
+              // 倍率に応じてクラスを決定
+              let ratioClass = '';
+              const ratioNum = parseFloat(ad.ratio);
+              if (ad.ratio === 999) {
+                ratioClass = 'ratio-infinite';
+              } else if (!isNaN(ratioNum)) {
+                if (ratioNum >= 3) {
+                  ratioClass = 'ratio-high';
+                } else if (ratioNum >= 1.5) {
+                  ratioClass = 'ratio-medium';
+                }
+              }
+
+              return `
+              <div class="age-item ${ageFilter && ad.age === `${ageFilter}歳` ? 'highlight' : ''} ${ratioClass}">
                 <div class="age-label">${ad.age}</div>
                 <div class="age-ratio">
                   ${ad.ratio === 999 ? '∞' : ad.ratio}倍
@@ -1149,7 +1178,7 @@ class NurseryDashboard {
                   ${ad.applied}/${ad.accepted}
                 </div>
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
         </div>
       </div>
