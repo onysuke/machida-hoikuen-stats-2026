@@ -1799,27 +1799,56 @@ footer p {
    地図ポップアップの詳細ボタン
    ======================================== */
 .map-popup-detail-btn {
-    padding: 10px 16px;
-    font-size: 14px;
+    padding: 6px 12px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--white);
     background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
     border: none;
-    border-radius: var(--radius-xs);
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     font-family: 'M PLUS Rounded 1c', sans-serif;
     white-space: nowrap;
 }
 
 .map-popup-detail-btn:hover {
     transform: translateY(-1px);
-    box-shadow: var(--shadow-pink);
+    box-shadow: 0 2px 6px rgba(255, 56, 92, 0.2);
 }
 
 .map-popup-detail-btn:active {
     transform: translateY(0);
+}
+
+.map-popup-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1.5px solid var(--border-color);
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    white-space: nowrap;
+}
+
+.map-popup-link:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+    background: var(--bg-gray);
+}
+
+.map-popup-link svg {
+    width: 12px;
+    height: 12px;
 }
 
 /* ========================================
