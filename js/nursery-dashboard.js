@@ -231,12 +231,10 @@ class NurseryDashboard {
     // スクロール位置に応じてボタンの表示/非表示を切り替え
     const toggleButtonVisibility = () => {
       const mapRect = mapContainer.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
 
-      // 地図の上端が画面の上端より上にある場合（地図が少しでもスクロールアウトしたら）ボタンを表示
-      // ただし、画面の高さの30%以上スクロールアウトしたらボタンを表示
-      const scrollThreshold = windowHeight * 0.3;
-      if (mapRect.top < -scrollThreshold) {
+      // 地図が画面外（上にスクロールアウト）したらボタンを表示
+      // 地図の下端が画面の上端より上にある = 地図が完全に見えなくなったら表示
+      if (mapRect.bottom < 0) {
         scrollToMapBtn.classList.add('visible');
       } else {
         scrollToMapBtn.classList.remove('visible');
