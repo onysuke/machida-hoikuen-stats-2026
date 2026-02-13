@@ -21,6 +21,8 @@
                         <span class="header-meta-item">📊 データソース: <a
                                 href="https://kosodate-machida.tokyo.jp/soshiki/4/3/nyuuen/hoiku/202604/13587.html"
                                 target="_blank" rel="noopener noreferrer">まちだ子育てサイト</a></span>
+                        <span class="header-meta-item">💬 お問い合わせ: <a href="https://forms.gle/qWuVEbK95DU2ji9x5"
+                                target="_blank" rel="noopener noreferrer">フォーム</a></span>
                     </p>
                 </div>
             </div>
@@ -245,6 +247,15 @@
 
         <!-- メッセージ通知 -->
         <div id="message-container" class="message-container"></div>
+
+        <!-- 地図へスクロールするフローティングボタン -->
+        <button id="scroll-to-map-btn" class="scroll-to-map-btn" aria-label="地図へ戻る" title="地図へ戻る">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+            <span>地図へ</span>
+        </button>
     </div>
 
     <!-- Chart.js -->
