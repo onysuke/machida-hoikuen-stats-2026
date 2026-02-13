@@ -146,6 +146,68 @@ class NurseryDashboard {
     document.getElementById('region-filter')?.addEventListener('change', () => {
       this.applyFilters();
     });
+
+    // サイドバーの閉じるボタン
+    document.querySelector('.sidebar-close-btn')?.addEventListener('click', () => {
+      this.closeMapSidebar();
+    });
+
+    // ESCキーでサイドバーを閉じる
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.closeMapSidebar();
+      }
+    });
+
+    // モバイル用: スワイプでサイドバーを閉じる
+    this.initializeSidebarSwipe();
+  }
+
+  // スワイプでサイドバーを閉じる機能
+  initializeSidebarSwipe() {
+    const sidebar = document.getElementById('map-sidebar');
+    const header = document.querySelector('.map-sidebar-header');
+    if (!sidebar || !header) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    header.addEventListener('touchstart', (e) => {
+      if (window.innerWidth > 768) return; // モバイルのみ
+      startY = e.touches[0].clientY;
+      isDragging = true;
+      sidebar.style.transition = 'none';
+    });
+
+    header.addEventListener('touchmove', (e) => {
+      if (!isDragging || window.innerWidth > 768) return;
+
+      currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+
+      // 下方向のスワイプのみ許可
+      if (deltaY > 0) {
+        sidebar.style.transform = `translateY(${deltaY}px)`;
+      }
+    });
+
+    header.addEventListener('touchend', () => {
+      if (!isDragging || window.innerWidth > 768) return;
+
+      isDragging = false;
+      sidebar.style.transition = '';
+
+      const deltaY = currentY - startY;
+
+      // 100px以上下にスワイプしたら閉じる
+      if (deltaY > 100) {
+        this.closeMapSidebar();
+      } else {
+        // 元の位置に戻す
+        sidebar.style.transform = 'translateY(0)';
+      }
+    });
   }
 
   switchRegionAge(age) {
@@ -377,42 +439,39 @@ class NurseryDashboard {
     }
 
     this.charts.ageChart = new Chart(ctx, {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: ageData.labels,
         datasets: [
           {
-            label: '応募数',
-            data: ageData.applied,
-            borderColor: 'rgba(255, 56, 92, 1)',
-            backgroundColor: 'rgba(255, 56, 92, 0.1)',
-            tension: 0.3,
-            fill: true,
-            borderWidth: 3,
-            yAxisID: 'y'
-          },
-          {
             label: '内定数',
             data: ageData.accepted,
+            type: 'bar',
+            backgroundColor: 'rgba(34, 34, 34, 0.8)',
             borderColor: 'rgba(34, 34, 34, 1)',
-            backgroundColor: 'rgba(34, 34, 34, 0.1)',
-            tension: 0.3,
-            fill: true,
-            borderWidth: 3,
+            borderWidth: 1,
             yAxisID: 'y'
           },
           {
-            label: '倍率',
+            label: '応募数',
+            data: ageData.applied,
+            type: 'bar',
+            backgroundColor: 'rgba(255, 56, 92, 0.7)',
+            borderColor: 'rgba(255, 56, 92, 1)',
+            borderWidth: 1,
+            yAxisID: 'y'
+          },
+          {
+            label: '応募倍率',
             data: ageData.ratio,
+            type: 'line',
             borderColor: 'rgba(113, 113, 113, 1)',
             backgroundColor: 'rgba(113, 113, 113, 0.1)',
-            tension: 0.3,
-            fill: false,
             borderWidth: 2,
-            borderDash: [5, 5],
-            pointStyle: 'circle',
             pointRadius: 5,
             pointBackgroundColor: 'rgba(113, 113, 113, 1)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
             yAxisID: 'y1'
           }
         ]
@@ -444,11 +503,11 @@ class NurseryDashboard {
                   label += ': ';
                 }
                 if (context.datasetIndex === 2) {
-                  // 倍率の場合
+                  // 応募倍率の場合
                   label += context.parsed.y.toFixed(2) + '倍';
                 } else {
                   // 応募数・内定数の場合
-                  label += context.parsed.y + '名';
+                  label += context.parsed.y + '人';
                 }
                 return label;
               }
@@ -862,11 +921,12 @@ class NurseryDashboard {
           })
           .addTo(this.map);
 
-        // マーカークリックでカードへスクロール
+        // マーカークリックでサイドバーを表示
         marker.on('click', () => {
-          setTimeout(() => {
-            this.scrollToNursery(facility.id);
-          }, 300);
+          // ポップアップを閉じる
+          marker.closePopup();
+          // サイドバーを開く
+          this.openMapSidebar(facility);
         });
 
         // マーカーに施設情報を保存
@@ -1133,20 +1193,20 @@ class NurseryDashboard {
         <div class="nursery-stats-grid">
           <div class="nursery-stat">
             <div class="nursery-stat-label">定員</div>
-            <div class="nursery-stat-value">${facility.capacity}名</div>
+            <div class="nursery-stat-value">${facility.capacity}<span class="stat-unit">人</span></div>
           </div>
           <div class="nursery-stat">
             <div class="nursery-stat-label">総応募</div>
-            <div class="nursery-stat-value">${facility.totalApplied}名</div>
+            <div class="nursery-stat-value">${facility.totalApplied}<span class="stat-unit">人</span></div>
           </div>
           <div class="nursery-stat">
             <div class="nursery-stat-label">総内定</div>
-            <div class="nursery-stat-value">${facility.totalAccepted}名</div>
+            <div class="nursery-stat-value">${facility.totalAccepted}<span class="stat-unit">人</span></div>
           </div>
           <div class="nursery-stat">
             <div class="nursery-stat-label">応募倍率</div>
             <div class="nursery-stat-value">
-              ${facility.overallRatio === 999 ? '∞' : facility.overallRatio}倍
+              ${facility.overallRatio === 999 ? '∞' : facility.overallRatio}<span class="stat-unit">倍</span>
             </div>
           </div>
         </div>
@@ -1183,6 +1243,128 @@ class NurseryDashboard {
         </div>
       </div>
     `;
+  }
+
+  // 地図サイドバーを開く
+  openMapSidebar(facility) {
+    const sidebar = document.getElementById('map-sidebar');
+    const title = document.getElementById('sidebar-title');
+    const content = document.getElementById('sidebar-content');
+
+    if (!sidebar || !title || !content) return;
+
+    // タイトル設定
+    title.textContent = facility.name;
+
+    // コンテンツ生成
+    content.innerHTML = this.renderSidebarContent(facility);
+
+    // サイドバーを開く
+    sidebar.classList.add('open');
+
+    // 現在選択中の施設IDを保存
+    this.selectedFacilityId = facility.id;
+  }
+
+  // 地図サイドバーを閉じる
+  closeMapSidebar() {
+    const sidebar = document.getElementById('map-sidebar');
+    if (sidebar) {
+      sidebar.classList.remove('open');
+    }
+    this.selectedFacilityId = null;
+  }
+
+  // サイドバーコンテンツを生成
+  renderSidebarContent(facility) {
+    const ageFilter = document.getElementById('age-filter')?.value;
+    const homepage = this.getHomepageLink(facility.name);
+
+    return `
+      <div class="sidebar-facility-meta">
+        <div class="nursery-meta">
+          <span class="badge badge-region">${facility.region}</span>
+          <span class="badge badge-type">${facility.facilityType}</span>
+        </div>
+        ${homepage ? `
+          <a href="${homepage}" target="_blank" rel="noopener noreferrer" class="homepage-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            ホームページを開く
+          </a>
+        ` : ''}
+      </div>
+
+      <div class="nursery-stats-grid">
+        <div class="nursery-stat">
+          <div class="nursery-stat-label">定員</div>
+          <div class="nursery-stat-value">${facility.capacity}<span class="stat-unit">人</span></div>
+        </div>
+        <div class="nursery-stat">
+          <div class="nursery-stat-label">総応募</div>
+          <div class="nursery-stat-value">${facility.totalApplied}<span class="stat-unit">人</span></div>
+        </div>
+        <div class="nursery-stat">
+          <div class="nursery-stat-label">総内定</div>
+          <div class="nursery-stat-value">${facility.totalAccepted}<span class="stat-unit">人</span></div>
+        </div>
+        <div class="nursery-stat">
+          <div class="nursery-stat-label">応募倍率</div>
+          <div class="nursery-stat-value">
+            ${facility.overallRatio === 999 ? '∞' : facility.overallRatio}<span class="stat-unit">倍</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="age-breakdown">
+        <h4>年齢別状況</h4>
+        <div class="age-grid">
+          ${facility.ageData.map(ad => {
+            let ratioClass = '';
+            const ratioNum = parseFloat(ad.ratio);
+            if (ad.ratio === 999) {
+              ratioClass = 'ratio-infinite';
+            } else if (!isNaN(ratioNum)) {
+              if (ratioNum >= 3) {
+                ratioClass = 'ratio-high';
+              } else if (ratioNum >= 1.5) {
+                ratioClass = 'ratio-medium';
+              }
+            }
+
+            return `
+            <div class="age-item ${ageFilter && ad.age === ageFilter + '歳' ? 'highlight' : ''} ${ratioClass}">
+              <div class="age-label">${ad.age}</div>
+              <div class="age-ratio">
+                ${ad.ratio === 999 ? '∞' : ad.ratio}倍
+              </div>
+              <div style="font-size: 0.75em; color: #717171;">
+                ${ad.applied}/${ad.accepted}
+              </div>
+            </div>
+          `}).join('')}
+        </div>
+      </div>
+
+      <div style="margin-top: 24px;">
+        <button class="sidebar-action-btn" onclick="nurseryDashboard.scrollToNurseryFromSidebar(${facility.id})">
+          カード一覧で見る
+        </button>
+      </div>
+    `;
+  }
+
+  // サイドバーからカード一覧へスクロール
+  scrollToNurseryFromSidebar(nurseryId) {
+    // サイドバーを閉じる
+    this.closeMapSidebar();
+    // サイドバーが閉じるのを待ってからスクロール
+    setTimeout(() => {
+      this.scrollToNursery(nurseryId);
+    }, 400);
   }
 
   showMessage(text, type = 'success') {
