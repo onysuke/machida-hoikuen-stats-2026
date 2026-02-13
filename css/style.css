@@ -1794,3 +1794,99 @@ footer p {
         font-size: 10px;
     }
 }
+
+/* ========================================
+   地図ポップアップの詳細ボタン
+   ======================================== */
+.map-popup-detail-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    border: none;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    white-space: nowrap;
+}
+
+.map-popup-detail-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-pink);
+}
+
+.map-popup-detail-btn:active {
+    transform: translateY(0);
+}
+
+/* ========================================
+   地図へスクロールするフローティングボタン
+   ======================================== */
+.scroll-to-map-btn {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: var(--white);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.8);
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+}
+
+.scroll-to-map-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.scroll-to-map-btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: var(--shadow-pink), 0 8px 32px rgba(255, 56, 92, 0.25);
+}
+
+.scroll-to-map-btn:active {
+    transform: translateY(-2px) scale(1);
+}
+
+.scroll-to-map-btn svg {
+    flex-shrink: 0;
+}
+
+.scroll-to-map-btn span {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+    .scroll-to-map-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+    }
+
+    .scroll-to-map-btn span {
+        font-size: 9px;
+    }
+}

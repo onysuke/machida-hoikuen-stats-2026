@@ -161,6 +161,9 @@ class NurseryDashboard {
 
     // モバイル用: スワイプでサイドバーを閉じる
     this.initializeSidebarSwipe();
+
+    // 地図へスクロールするボタン
+    this.initializeScrollToMapButton();
   }
 
   // スワイプでサイドバーを閉じる機能
@@ -208,6 +211,49 @@ class NurseryDashboard {
         sidebar.style.transform = 'translateY(0)';
       }
     });
+  }
+
+  // 地図へスクロールするボタンの初期化
+  initializeScrollToMapButton() {
+    const scrollToMapBtn = document.getElementById('scroll-to-map-btn');
+    const mapContainer = document.getElementById('nursery-map');
+
+    if (!scrollToMapBtn || !mapContainer) return;
+
+    // ボタンクリック時の処理
+    scrollToMapBtn.addEventListener('click', () => {
+      mapContainer.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
+    // スクロール位置に応じてボタンの表示/非表示を切り替え
+    const toggleButtonVisibility = () => {
+      const mapRect = mapContainer.getBoundingClientRect();
+
+      // 地図が画面外（下にスクロールしている）にある場合にボタンを表示
+      if (mapRect.bottom < 0) {
+        scrollToMapBtn.classList.add('visible');
+      } else {
+        scrollToMapBtn.classList.remove('visible');
+      }
+    };
+
+    // スクロールイベントをリスナー登録
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          toggleButtonVisibility();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // 初期状態を設定
+    toggleButtonVisibility();
   }
 
   switchRegionAge(age) {
@@ -913,7 +959,9 @@ class NurseryDashboard {
 
         // マーカーを作成
         const marker = L.marker([coords.lat, coords.lng], { icon })
-          .bindPopup(this.createMapPopup(facility))
+          .bindPopup(this.createMapPopup(facility), {
+            maxWidth: 300
+          })
           .bindTooltip(this.createMapTooltip(facility), {
             direction: 'top',
             offset: [0, -12],
@@ -921,12 +969,19 @@ class NurseryDashboard {
           })
           .addTo(this.map);
 
-        // マーカークリックでサイドバーを表示
+        // マーカークリック時の処理
         marker.on('click', () => {
-          // ポップアップを閉じる
-          marker.closePopup();
-          // サイドバーを開く
-          this.openMapSidebar(facility);
+          // モバイル判定（768px以下）
+          const isMobile = window.innerWidth <= 768;
+
+          if (isMobile) {
+            // モバイルの場合はポップアップを開く（デフォルト動作を維持）
+            // ポップアップは自動で開かれる
+          } else {
+            // デスクトップの場合はポップアップを閉じてサイドバーを開く
+            marker.closePopup();
+            this.openMapSidebar(facility);
+          }
         });
 
         // マーカーに施設情報を保存
@@ -1007,7 +1062,12 @@ class NurseryDashboard {
         <div class="map-popup-info">定員: ${facility.capacity}名</div>
         <div class="map-popup-info">応募倍率: ${facility.overallRatio === 999 ? '∞' : facility.overallRatio}倍</div>
         <div class="map-popup-info">総応募: ${facility.totalApplied}名 · 内定: ${facility.totalAccepted}名</div>
-        ${homepage ? `<a href="${homepage}" target="_blank" rel="noopener noreferrer" class="map-popup-link">ホームページ</a>` : ''}
+        <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="map-popup-detail-btn" onclick="event.stopPropagation(); nurseryDashboard.scrollToNurseryFromMap(${facility.id})">
+            カードで詳細をみる
+          </button>
+          ${homepage ? `<a href="${homepage}" target="_blank" rel="noopener noreferrer" class="map-popup-link">ホームページ</a>` : ''}
+        </div>
       </div>
     `;
   }
@@ -1365,6 +1425,38 @@ class NurseryDashboard {
     setTimeout(() => {
       this.scrollToNursery(nurseryId);
     }, 400);
+  }
+
+  // 地図マーカーのポップアップからカード一覧へスクロール
+  scrollToNurseryFromMap(nurseryId) {
+    // 該当の保育園を検索
+    const facility = this.nurseryData.find(f => f.id == nurseryId);
+    if (!facility) return;
+
+    // フィルターをクリアして全保育園を表示
+    document.getElementById('age-filter').value = '';
+    document.getElementById('region-filter').value = facility.region; // 該当地域でフィルター
+    this.applyFilters();
+
+    // 少し待ってから要素を検索（DOMの更新を待つ）
+    setTimeout(() => {
+      const cardElement = document.getElementById(`nursery-${nurseryId}`);
+      if (cardElement) {
+        // スムーズスクロール
+        cardElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+
+        // ハイライト効果を追加
+        cardElement.classList.add('highlight-card');
+
+        // 3秒後にハイライトを削除
+        setTimeout(() => {
+          cardElement.classList.remove('highlight-card');
+        }, 3000);
+      }
+    }, 100);
   }
 
   showMessage(text, type = 'success') {
