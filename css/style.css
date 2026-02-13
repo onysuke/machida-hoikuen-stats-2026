@@ -906,7 +906,7 @@ section h3 {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 12px;
+    align-items: center;
 }
 
 .sidebar-facility-meta .homepage-link {
@@ -928,6 +928,36 @@ section h3 {
 .sidebar-facility-meta .homepage-link:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* サイドバーのシンプルなHPリンク */
+.sidebar-homepage-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1.5px solid var(--border-color);
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    white-space: nowrap;
+}
+
+.sidebar-homepage-link:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+    background: var(--bg-gray);
+}
+
+.sidebar-homepage-link svg {
+    width: 14px;
+    height: 14px;
 }
 
 .sidebar-action-btn {
