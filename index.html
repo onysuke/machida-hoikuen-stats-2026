@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>町田市保育園 応募状況ダッシュボード 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-icon">🍼</div>
+                <div class="header-text">
+                    <h1>町田市保育園の応募・内定に関するダッシュボード</h1>
+                    <p class="header-subtitle">2026年度4月入園 町田市の認可保育所等の応募・内定状況を可視化しています。有志による非公式です。</p>
+                    <p class="header-meta">
+                        <span class="header-meta-item">📅 最終更新: 2026年1月9日</span>
+                        <span class="header-meta-item">📊 データソース: <a
+                                href="https://kosodate-machida.tokyo.jp/soshiki/4/3/nyuuen/hoiku/202604/13587.html"
+                                target="_blank" rel="noopener noreferrer">まちだ子育てサイト</a></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- ヘッダー統計カード -->
+            <div class="header-stats">
+                <div class="header-stat-card">
+                    <div class="header-stat-icon">👶</div>
+                    <div class="header-stat-content">
+                        <div class="header-stat-value">2,913<span class="unit">人</span></div>
+                        <div class="header-stat-label">総応募人数</div>
+                    </div>
+                </div>
+                <div class="header-stat-card">
+                    <div class="header-stat-icon">✅</div>
+                    <div class="header-stat-content">
+                        <div class="header-stat-value">2,117<span class="unit">人</span></div>
+                        <div class="header-stat-label">内定人数</div>
+                    </div>
+                </div>
+                <div class="header-stat-card">
+                    <div class="header-stat-icon">📈</div>
+                    <div class="header-stat-content">
+                        <div class="header-stat-value">72.7<span class="unit">%</span></div>
+                        <div class="header-stat-label">内定率</div>
+                    </div>
+                </div>
+                <div class="header-stat-card">
+                    <div class="header-stat-icon">🎯</div>
+                    <div class="header-stat-content">
+                        <div class="header-stat-value">1.38<span class="unit">倍</span></div>
+                        <div class="header-stat-label">平均応募倍率</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- グラフ表示セクション -->
+            <section class="charts-section">
+
+                <div class="chart-container">
+                    <h3>年齢別応募・内定状況</h3>
+
+                    <!-- 年齢別応募・内定状況の表 -->
+                    <div class="age-summary-table-container">
+                        <h4>2026年4月一次募集の認可保育所等への応募、内定人数等の状況</h4>
+                        <table class="age-summary-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>0歳児</th>
+                                    <th>1歳児</th>
+                                    <th>2歳児</th>
+                                    <th>3歳児</th>
+                                    <th>4歳児</th>
+                                    <th>5歳児</th>
+                                    <th>合計</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="row-label">応募人数<br><span class="row-sublabel">(2026年4月1日一次募集)</span></td>
+                                    <td>680</td>
+                                    <td>1,155</td>
+                                    <td>425</td>
+                                    <td>534</td>
+                                    <td>77</td>
+                                    <td>42</td>
+                                    <td class="total-cell">2,913</td>
+                                </tr>
+                                <tr>
+                                    <td class="row-label">内定人数<br><span class="row-sublabel">(2026年1月9日時点)</span></td>
+                                    <td>535</td>
+                                    <td>780</td>
+                                    <td>252</td>
+                                    <td>465</td>
+                                    <td>57</td>
+                                    <td>28</td>
+                                    <td class="total-cell">2,117</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="table-notes">
+                            <p><strong>※保育所等とは</strong>、認可保育所、認定こども園（2・3号認定）、小規模保育園、家庭的保育者です。</p>
+                            <p><strong>※応募人数とは</strong>、一次募集（2025年10月1日から11月5日までの受付分）の申請数です。</p>
+                            <p class="data-source">データ出典: <a
+                                    href="https://kosodate-machida.tokyo.jp/soshiki/4/3/nyuuen/hoiku/202604/13587.html"
+                                    target="_blank" rel="noopener noreferrer">町田市公式サイト - 2026年4月一次応募・内定人数一覧</a></p>
+                        </div>
+                    </div>
+
+                    <canvas id="age-chart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>地域別応募状況</h3>
+
+                    <div class="region-age-tabs">
+                        <button class="region-age-tab active" data-age="all">全体</button>
+                        <button class="region-age-tab" data-age="0">0歳</button>
+                        <button class="region-age-tab" data-age="1">1歳</button>
+                        <button class="region-age-tab" data-age="2">2歳</button>
+                        <button class="region-age-tab" data-age="3">3歳</button>
+                        <button class="region-age-tab" data-age="4">4歳</button>
+                        <button class="region-age-tab" data-age="5">5歳</button>
+                    </div>
+
+                    <p class="chart-note">
+                        <strong>グラフの見方:</strong><br>
+                        <span
+                            style="display: inline-block; width: 12px; height: 12px; background: rgba(34, 34, 34, 0.8); margin-right: 4px;"></span>
+                        <strong>内定数</strong>: 実際に内定が出ている人数<br>
+                        <span
+                            style="display: inline-block; width: 12px; height: 12px; background: rgba(255, 56, 92, 0.7); margin-right: 4px;"></span>
+                        <strong>応募数</strong>: 第一希望から第五希望までの合計応募数<br>
+                        <span
+                            style="display: inline-block; width: 12px; height: 12px; background: rgba(113, 113, 113, 1); border-radius: 50%; margin-right: 4px;"></span>
+                        <strong>応募倍率</strong>: 応募数 ÷ 内定数<br>
+                        <br>
+                        ⚠️ <strong>重要な注意:</strong> 応募数は第一希望から第五希望までの<strong>合計値</strong>を含むため、
+                        <strong>実際の応募者数よりもかなり多く</strong>なっています。
+                        そのため、<strong>倍率は実際よりも高く表示</strong>されます（例: 実際1.5倍 → 表示7.5倍程度）。
+                    </p>
+                    <canvas id="region-chart"></canvas>
+                </div>
+            </section>
+
+            <!-- ランキングセクション -->
+            <section class="ranking-section">
+                <h2>保育園ランキング</h2>
+
+                <div class="ranking-tabs">
+                    <button class="ranking-tab active" data-ranking="ratio">応募倍率が高い順</button>
+                    <button class="ranking-tab" data-ranking="applied">応募数が多い順</button>
+                    <button class="ranking-tab" data-ranking="vacancy">空きが多い順</button>
+                </div>
+
+                <div id="ranking-list" class="ranking-list"></div>
+            </section>
+
+            <!-- フィルターセクション -->
+            <section class="filter-section">
+                <h2>保育園を探す</h2>
+
+                <div class="filter-controls">
+                    <div class="form-group">
+                        <label for="age-filter">年齢</label>
+                        <select id="age-filter">
+                            <option value="">全年齢</option>
+                            <option value="0">0歳</option>
+                            <option value="1">1歳</option>
+                            <option value="2">2歳</option>
+                            <option value="3">3歳</option>
+                            <option value="4">4歳</option>
+                            <option value="5">5歳</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="region-filter">地域</label>
+                        <select id="region-filter">
+                            <option value="">全地域</option>
+                            <option value="堺地域">堺地域</option>
+                            <option value="忠生地域">忠生地域</option>
+                            <option value="町田地域">町田地域</option>
+                            <option value="南地域">南地域</option>
+                            <option value="鶴川地域">鶴川地域</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 地図 -->
+                <div class="map-container">
+                    <h3>地図で探す</h3>
+                    <p class="map-description">
+                        地図上のマーカーをクリックすると、保育園の詳細情報を確認できます。
+                    </p>
+                    <div class="map-legend-container">
+                        <div class="map-legend-section">
+                            <strong>マーカーの色（応募倍率）:</strong>
+                            <span class="map-legend-item">🔴 高 (3倍以上)</span>
+                            <span class="map-legend-item">🟡 中 (1.5-3倍)</span>
+                            <span class="map-legend-item">🟢 低 (1.5倍未満)</span>
+                        </div>
+                        <div class="map-legend-section">
+                            <strong>マーカーの形（保育園の種類）:</strong>
+                            <span class="map-legend-item">● 認可保育園</span>
+                            <span class="map-legend-item">■ 認定こども園</span>
+                            <span class="map-legend-item">▲ 小規模保育園</span>
+                            <span class="map-legend-item">◆ 家庭的保育者</span>
+                            <span class="map-legend-item">⬡ 送迎保育園</span>
+                            <span class="map-legend-item">★ その他</span>
+                        </div>
+                    </div>
+                    <div id="nursery-map"></div>
+                </div>
+
+                <h3 style="margin-top: 48px;">保育園一覧</h3>
+                <div id="filtered-nursery-list" class="facilities-grid"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>データソース: 町田市公式サイト | 2026年度4月入園 一次応募・内定人数一覧</p>
+        </footer>
+
+        <!-- メッセージ通知 -->
+        <div id="message-container" class="message-container"></div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Leaflet.js (地図ライブラリ) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- 保育園ダッシュボード -->
+    <script src="js/nursery-data-loader.js"></script>
+    <script src="js/nursery-dashboard.js"></script>
+</body>
+
+</html>

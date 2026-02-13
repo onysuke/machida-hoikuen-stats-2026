@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Wrangler
+.wrangler/
+dist/
+node_modules/
+
+# Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
