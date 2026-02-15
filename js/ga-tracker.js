@@ -3,11 +3,7 @@
  */
 class GATracker {
   constructor() {
-    this.enabled = typeof gtag !== 'undefined';
-
-    if (!this.enabled) {
-      console.warn('Google Analytics (gtag) is not loaded. Events will not be tracked.');
-    }
+    // gtagの存在チェックは実行時に行う（初期化時ではない）
   }
 
   /**
@@ -16,13 +12,15 @@ class GATracker {
    * @param {object} params - イベントパラメータ
    */
   trackEvent(eventName, params = {}) {
-    if (!this.enabled) {
+    // gtagが定義されているかチェック
+    if (typeof gtag === 'undefined') {
       console.log('[GA Tracker - Dev Mode]', eventName, params);
       return;
     }
 
     try {
       gtag('event', eventName, params);
+      console.log('[GA Tracker]', eventName, params);
     } catch (error) {
       console.error('[GA Tracker Error]', error);
     }
