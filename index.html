@@ -155,10 +155,35 @@
             <section class="ranking-section">
                 <h2>保育園ランキング</h2>
 
+                <div class="ranking-filters">
+                    <div class="ranking-filter-group">
+                        <label for="ranking-age-select">年齢:</label>
+                        <select id="ranking-age-select">
+                            <option value="all">全年齢</option>
+                            <option value="0">0歳</option>
+                            <option value="1">1歳</option>
+                            <option value="2">2歳</option>
+                            <option value="3">3歳</option>
+                            <option value="4">4歳</option>
+                            <option value="5">5歳</option>
+                        </select>
+                    </div>
+                    <div class="ranking-filter-group">
+                        <label for="ranking-region-select">地域:</label>
+                        <select id="ranking-region-select">
+                            <option value="all">全地域</option>
+                            <option value="堺地域">堺地域</option>
+                            <option value="忠生地域">忠生地域</option>
+                            <option value="町田地域">町田地域</option>
+                            <option value="南地域">南地域</option>
+                            <option value="鶴川地域">鶴川地域</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="ranking-tabs">
                     <button class="ranking-tab active" data-ranking="ratio">応募倍率が高い順</button>
                     <button class="ranking-tab" data-ranking="applied">応募数が多い順</button>
-                    <button class="ranking-tab" data-ranking="vacancy">空きが多い順</button>
                 </div>
 
                 <div id="ranking-list" class="ranking-list"></div>

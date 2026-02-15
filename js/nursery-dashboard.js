@@ -6,6 +6,8 @@ class NurseryDashboard {
     this.filteredData = [];
     this.charts = {};
     this.currentRanking = 'ratio';
+    this.currentRankingAge = 'all';  // ランキングの年齢フィルタ
+    this.currentRankingRegion = 'all';  // ランキングの地域フィルタ
     this.currentRegionAge = 'all';  // 地域別グラフの年齢フィルタ
     this.rankingDisplayCount = 5;  // ランキングの表示件数（初期値は5件）
 
@@ -119,6 +121,30 @@ class NurseryDashboard {
       });
     });
 
+    // ランキング年齢セレクター
+    document.getElementById('ranking-age-select')?.addEventListener('change', (e) => {
+      this.currentRankingAge = e.target.value;
+      // 「保育園を探す」の年齢フィルターと同期
+      const ageFilter = document.getElementById('age-filter');
+      if (ageFilter) {
+        ageFilter.value = e.target.value === 'all' ? '' : e.target.value;
+      }
+      this.renderRanking(this.currentRanking);
+      this.applyFilters();
+    });
+
+    // ランキング地域セレクター
+    document.getElementById('ranking-region-select')?.addEventListener('change', (e) => {
+      this.currentRankingRegion = e.target.value;
+      // 「保育園を探す」の地域フィルターと同期
+      const regionFilter = document.getElementById('region-filter');
+      if (regionFilter) {
+        regionFilter.value = e.target.value === 'all' ? '' : e.target.value;
+      }
+      this.renderRanking(this.currentRanking);
+      this.applyFilters();
+    });
+
     // ランキングタブ
     document.querySelectorAll('.ranking-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
@@ -138,13 +164,27 @@ class NurseryDashboard {
       }
     });
 
-    // フィルター
-    document.getElementById('age-filter')?.addEventListener('change', () => {
+    // フィルター（保育園を探す）
+    document.getElementById('age-filter')?.addEventListener('change', (e) => {
+      // ランキングの年齢フィルターと同期
+      const rankingAgeSelect = document.getElementById('ranking-age-select');
+      if (rankingAgeSelect) {
+        rankingAgeSelect.value = e.target.value === '' ? 'all' : e.target.value;
+        this.currentRankingAge = rankingAgeSelect.value;
+      }
       this.applyFilters();
+      this.renderRanking(this.currentRanking);
     });
 
-    document.getElementById('region-filter')?.addEventListener('change', () => {
+    document.getElementById('region-filter')?.addEventListener('change', (e) => {
+      // ランキングの地域フィルターと同期
+      const rankingRegionSelect = document.getElementById('ranking-region-select');
+      if (rankingRegionSelect) {
+        rankingRegionSelect.value = e.target.value === '' ? 'all' : e.target.value;
+        this.currentRankingRegion = rankingRegionSelect.value;
+      }
       this.applyFilters();
+      this.renderRanking(this.currentRanking);
     });
 
     // サイドバーの閉じるボタン
@@ -772,6 +812,9 @@ class NurseryDashboard {
   }
 
   switchRanking(type) {
+    // vacancyオプションを無効化
+    if (type === 'vacancy') return;
+
     this.currentRanking = type;
     this.rankingDisplayCount = 5;  // ランキングタイプ変更時は表示件数をリセット
 
@@ -789,29 +832,61 @@ class NurseryDashboard {
   renderRanking(type) {
     let sorted = [...this.nurseryData];
 
-    // 倍率ランキングの場合は、倍率が∞(999)の施設を除外
+    // 地域フィルタリング
+    if (this.currentRankingRegion !== 'all') {
+      sorted = sorted.filter(facility => facility.region === this.currentRankingRegion);
+    }
+
+    // 年齢フィルタリング
+    if (this.currentRankingAge !== 'all') {
+      sorted = sorted.filter(facility =>
+        facility.ageData.some(ad => ad.age === `${this.currentRankingAge}歳`)
+      );
+    }
+
+    // 倍率ランキングの場合は∞(999)を除外
     if (type === 'ratio') {
-      sorted = sorted.filter(facility => facility.overallRatio < 999);
-    }
-
-    // ソート
-    switch (type) {
-      case 'ratio':
-        sorted.sort((a, b) => b.overallRatio - a.overallRatio);
-        break;
-      case 'applied':
-        sorted.sort((a, b) => b.totalApplied - a.totalApplied);
-        break;
-      case 'vacancy':
-        sorted.sort((a, b) => {
-          const vacancyA = a.capacity - a.totalAccepted;
-          const vacancyB = b.capacity - b.totalAccepted;
-          return vacancyB - vacancyA;
+      if (this.currentRankingAge === 'all') {
+        sorted = sorted.filter(facility => facility.overallRatio < 999);
+      } else {
+        sorted = sorted.filter(facility => {
+          const ageData = facility.ageData.find(ad => ad.age === `${this.currentRankingAge}歳`);
+          return ageData && ageData.ratio < 999;
         });
-        break;
+      }
     }
 
-    // 現在の表示件数分を取得
+    // ソートロジック
+    if (this.currentRankingAge === 'all') {
+      // 全年齢の場合
+      switch (type) {
+        case 'ratio':
+          sorted.sort((a, b) => b.overallRatio - a.overallRatio);
+          break;
+        case 'applied':
+          sorted.sort((a, b) => b.totalApplied - a.totalApplied);
+          break;
+      }
+    } else {
+      // 特定年齢の場合
+      switch (type) {
+        case 'ratio':
+          sorted.sort((a, b) => {
+            const ratioA = a.ageData.find(ad => ad.age === `${this.currentRankingAge}歳`)?.ratio || 0;
+            const ratioB = b.ageData.find(ad => ad.age === `${this.currentRankingAge}歳`)?.ratio || 0;
+            return ratioB - ratioA;
+          });
+          break;
+        case 'applied':
+          sorted.sort((a, b) => {
+            const appliedA = a.ageData.find(ad => ad.age === `${this.currentRankingAge}歳`)?.applied || 0;
+            const appliedB = b.ageData.find(ad => ad.age === `${this.currentRankingAge}歳`)?.applied || 0;
+            return appliedB - appliedA;
+          });
+          break;
+      }
+    }
+
     const displayItems = sorted.slice(0, this.rankingDisplayCount);
     const hasMore = sorted.length > this.rankingDisplayCount;
 
@@ -820,15 +895,32 @@ class NurseryDashboard {
 
     container.innerHTML = displayItems.map((facility, index) => {
       let value, unit, ratioClass = '';
+      let breakdown = '';
+
+      // 年齢別または全体のデータを取得
+      let displayRatio, displayApplied, displayAccepted;
+      if (this.currentRankingAge === 'all') {
+        displayRatio = facility.overallRatio;
+        displayApplied = facility.totalApplied;
+        displayAccepted = facility.totalAccepted;
+      } else {
+        const ageData = facility.ageData.find(ad => ad.age === `${this.currentRankingAge}歳`);
+        displayRatio = ageData?.ratio || 0;
+        displayApplied = ageData?.applied || 0;
+        displayAccepted = ageData?.accepted || 0;
+      }
+
       switch (type) {
         case 'ratio':
-          value = facility.overallRatio === 999 ? '∞' : facility.overallRatio;
+          value = displayRatio === 999 ? '∞' : displayRatio;
           unit = '倍';
-          // 倍率に応じてクラスを決定
-          if (facility.overallRatio === 999) {
+          // 内訳を追加（応募数/内定数）
+          breakdown = `<div class="ranking-breakdown">${displayApplied}人/${displayAccepted}人</div>`;
+          // 色分類
+          if (displayRatio === 999) {
             ratioClass = 'ratio-infinite';
           } else {
-            const ratioNum = parseFloat(facility.overallRatio);
+            const ratioNum = parseFloat(displayRatio);
             if (!isNaN(ratioNum)) {
               if (ratioNum >= 3) {
                 ratioClass = 'ratio-high';
@@ -841,11 +933,7 @@ class NurseryDashboard {
           }
           break;
         case 'applied':
-          value = facility.totalApplied;
-          unit = '名';
-          break;
-        case 'vacancy':
-          value = Math.max(0, facility.capacity - facility.totalAccepted);
+          value = displayApplied;
           unit = '名';
           break;
       }
@@ -859,18 +947,21 @@ class NurseryDashboard {
               ${facility.region} · ${facility.facilityType}
             </div>
           </div>
-          <div class="ranking-value ${ratioClass}">${value}${unit}</div>
+          <div class="ranking-value-wrapper">
+            <div class="ranking-value ${ratioClass}">${value}${unit}</div>
+            ${breakdown}
+          </div>
         </div>
       `;
     }).join('');
 
-    // 「もっと見る」ボタンを追加
+    // 「もっと見る」ボタン
     if (hasMore) {
       const showMoreBtn = document.createElement('button');
       showMoreBtn.className = 'show-more-btn';
       showMoreBtn.innerHTML = '▼ もっと見る';
       showMoreBtn.addEventListener('click', () => {
-        this.rankingDisplayCount += 5;  // 5件ずつ追加
+        this.rankingDisplayCount += 5;
         this.renderRanking(type);
       });
       container.appendChild(showMoreBtn);
