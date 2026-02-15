@@ -124,13 +124,25 @@ class NurseryDashboard {
     // ランキング年齢セレクター
     document.getElementById('ranking-age-select')?.addEventListener('change', (e) => {
       this.currentRankingAge = e.target.value;
+      // 「保育園を探す」の年齢フィルターと同期
+      const ageFilter = document.getElementById('age-filter');
+      if (ageFilter) {
+        ageFilter.value = e.target.value === 'all' ? '' : e.target.value;
+      }
       this.renderRanking(this.currentRanking);
+      this.applyFilters();
     });
 
     // ランキング地域セレクター
     document.getElementById('ranking-region-select')?.addEventListener('change', (e) => {
       this.currentRankingRegion = e.target.value;
+      // 「保育園を探す」の地域フィルターと同期
+      const regionFilter = document.getElementById('region-filter');
+      if (regionFilter) {
+        regionFilter.value = e.target.value === 'all' ? '' : e.target.value;
+      }
       this.renderRanking(this.currentRanking);
+      this.applyFilters();
     });
 
     // ランキングタブ
@@ -152,13 +164,27 @@ class NurseryDashboard {
       }
     });
 
-    // フィルター
-    document.getElementById('age-filter')?.addEventListener('change', () => {
+    // フィルター（保育園を探す）
+    document.getElementById('age-filter')?.addEventListener('change', (e) => {
+      // ランキングの年齢フィルターと同期
+      const rankingAgeSelect = document.getElementById('ranking-age-select');
+      if (rankingAgeSelect) {
+        rankingAgeSelect.value = e.target.value === '' ? 'all' : e.target.value;
+        this.currentRankingAge = rankingAgeSelect.value;
+      }
       this.applyFilters();
+      this.renderRanking(this.currentRanking);
     });
 
-    document.getElementById('region-filter')?.addEventListener('change', () => {
+    document.getElementById('region-filter')?.addEventListener('change', (e) => {
+      // ランキングの地域フィルターと同期
+      const rankingRegionSelect = document.getElementById('ranking-region-select');
+      if (rankingRegionSelect) {
+        rankingRegionSelect.value = e.target.value === '' ? 'all' : e.target.value;
+        this.currentRankingRegion = rankingRegionSelect.value;
+      }
       this.applyFilters();
+      this.renderRanking(this.currentRanking);
     });
 
     // サイドバーの閉じるボタン
