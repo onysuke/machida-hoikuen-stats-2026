@@ -877,7 +877,7 @@ class NurseryDashboard {
           value = displayRatio === 999 ? '∞' : displayRatio;
           unit = '倍';
           // 内訳を追加（応募数/内定数）
-          breakdown = `<div class="ranking-breakdown">${displayApplied}/${displayAccepted}</div>`;
+          breakdown = `<div class="ranking-breakdown">${displayApplied}人/${displayAccepted}人</div>`;
           // 色分類
           if (displayRatio === 999) {
             ratioClass = 'ratio-infinite';
