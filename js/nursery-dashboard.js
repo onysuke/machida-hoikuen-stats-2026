@@ -7,6 +7,7 @@ class NurseryDashboard {
     this.charts = {};
     this.currentRanking = 'ratio';
     this.currentRankingAge = 'all';  // ランキングの年齢フィルタ
+    this.currentRankingRegion = 'all';  // ランキングの地域フィルタ
     this.currentRegionAge = 'all';  // 地域別グラフの年齢フィルタ
     this.rankingDisplayCount = 5;  // ランキングの表示件数（初期値は5件）
 
@@ -123,6 +124,12 @@ class NurseryDashboard {
     // ランキング年齢セレクター
     document.getElementById('ranking-age-select')?.addEventListener('change', (e) => {
       this.currentRankingAge = e.target.value;
+      this.renderRanking(this.currentRanking);
+    });
+
+    // ランキング地域セレクター
+    document.getElementById('ranking-region-select')?.addEventListener('change', (e) => {
+      this.currentRankingRegion = e.target.value;
       this.renderRanking(this.currentRanking);
     });
 
@@ -798,6 +805,11 @@ class NurseryDashboard {
 
   renderRanking(type) {
     let sorted = [...this.nurseryData];
+
+    // 地域フィルタリング
+    if (this.currentRankingRegion !== 'all') {
+      sorted = sorted.filter(facility => facility.region === this.currentRankingRegion);
+    }
 
     // 年齢フィルタリング
     if (this.currentRankingAge !== 'all') {

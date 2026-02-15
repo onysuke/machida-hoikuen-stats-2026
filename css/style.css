@@ -493,20 +493,27 @@ section h3 {
 }
 
 /* ランキング */
-.ranking-age-filter {
+.ranking-filters {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 20px;
     margin-bottom: 20px;
 }
 
-.ranking-age-filter label {
+.ranking-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ranking-filter-group label {
     font-size: 14px;
     font-weight: 700;
     color: var(--text-primary);
+    white-space: nowrap;
 }
 
-.ranking-age-filter select {
+.ranking-filter-group select {
     padding: 10px 16px;
     border: 2px solid var(--border-color);
     border-radius: var(--radius-sm);
@@ -519,25 +526,28 @@ section h3 {
     font-family: 'M PLUS Rounded 1c', sans-serif;
 }
 
-.ranking-age-filter select:hover {
+.ranking-filter-group select:hover {
     border-color: var(--primary-color);
 }
 
-.ranking-age-filter select:focus {
+.ranking-filter-group select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 4px rgba(255, 56, 92, 0.1);
 }
 
 @media (max-width: 768px) {
-    .ranking-age-filter {
+    .ranking-filters {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
+        gap: 12px;
     }
 
-    .ranking-age-filter select {
+    .ranking-filter-group {
         width: 100%;
+    }
+
+    .ranking-filter-group select {
+        flex: 1;
     }
 }
 
