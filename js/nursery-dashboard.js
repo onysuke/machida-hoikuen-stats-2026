@@ -857,22 +857,27 @@ class NurseryDashboard {
 
     container.innerHTML = displayItems.map((facility, index) => {
       let value, unit, ratioClass = '';
+      let breakdown = '';
 
       // 年齢別または全体のデータを取得
-      let displayRatio, displayApplied;
+      let displayRatio, displayApplied, displayAccepted;
       if (this.currentRankingAge === 'all') {
         displayRatio = facility.overallRatio;
         displayApplied = facility.totalApplied;
+        displayAccepted = facility.totalAccepted;
       } else {
         const ageData = facility.ageData.find(ad => ad.age === `${this.currentRankingAge}歳`);
         displayRatio = ageData?.ratio || 0;
         displayApplied = ageData?.applied || 0;
+        displayAccepted = ageData?.accepted || 0;
       }
 
       switch (type) {
         case 'ratio':
           value = displayRatio === 999 ? '∞' : displayRatio;
           unit = '倍';
+          // 内訳を追加（応募数/内定数）
+          breakdown = `<div class="ranking-breakdown">${displayApplied}/${displayAccepted}</div>`;
           // 色分類
           if (displayRatio === 999) {
             ratioClass = 'ratio-infinite';
@@ -904,7 +909,10 @@ class NurseryDashboard {
               ${facility.region} · ${facility.facilityType}
             </div>
           </div>
-          <div class="ranking-value ${ratioClass}">${value}${unit}</div>
+          <div class="ranking-value-wrapper">
+            <div class="ranking-value ${ratioClass}">${value}${unit}</div>
+            ${breakdown}
+          </div>
         </div>
       `;
     }).join('');

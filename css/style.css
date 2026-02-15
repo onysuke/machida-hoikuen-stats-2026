@@ -656,11 +656,25 @@ section h3 {
     color: var(--text-secondary);
 }
 
+.ranking-value-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    margin-left: 24px;
+}
+
 .ranking-value {
     font-size: 28px;
     font-weight: 800;
     color: var(--text-primary);
-    margin-left: 24px;
+}
+
+.ranking-breakdown {
+    font-size: 12px;
+    font-weight: 500;
+    color: #717171;
+    opacity: 0.8;
 }
 
 /* ランキングの倍率の色分け */
