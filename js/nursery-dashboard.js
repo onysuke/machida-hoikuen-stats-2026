@@ -118,12 +118,25 @@ class NurseryDashboard {
       tab.addEventListener('click', (e) => {
         const age = e.target.dataset.age;
         this.switchRegionAge(age);
+
+        // GA4イベント送信
+        gaTracker.trackSelectContent('region_age_tab', age, {
+          age: age,
+          tab_text: e.target.textContent.trim()
+        });
       });
     });
 
     // ランキング年齢セレクター
     document.getElementById('ranking-age-select')?.addEventListener('change', (e) => {
       this.currentRankingAge = e.target.value;
+
+      // GA4イベント送信
+      gaTracker.trackFilterChange('age', e.target.value, 'ranking', {
+        selected_age: e.target.value,
+        filter_text: e.target.options[e.target.selectedIndex].text
+      });
+
       // 「保育園を探す」の年齢フィルターと同期
       const ageFilter = document.getElementById('age-filter');
       if (ageFilter) {
@@ -136,6 +149,13 @@ class NurseryDashboard {
     // ランキング地域セレクター
     document.getElementById('ranking-region-select')?.addEventListener('change', (e) => {
       this.currentRankingRegion = e.target.value;
+
+      // GA4イベント送信
+      gaTracker.trackFilterChange('region', e.target.value, 'ranking', {
+        selected_region: e.target.value,
+        filter_text: e.target.options[e.target.selectedIndex].text
+      });
+
       // 「保育園を探す」の地域フィルターと同期
       const regionFilter = document.getElementById('region-filter');
       if (regionFilter) {
@@ -150,6 +170,12 @@ class NurseryDashboard {
       tab.addEventListener('click', (e) => {
         const rankingType = e.target.dataset.ranking;
         this.switchRanking(rankingType);
+
+        // GA4イベント送信
+        gaTracker.trackSelectContent('ranking_tab', rankingType, {
+          ranking_type: rankingType,
+          tab_text: e.target.textContent.trim()
+        });
       });
     });
 
@@ -159,6 +185,23 @@ class NurseryDashboard {
       if (rankingItem) {
         const nurseryId = rankingItem.dataset.nurseryId;
         if (nurseryId) {
+          // 保育園情報を取得
+          const facility = this.nurseryData.find(f => f.id == nurseryId);
+          if (facility) {
+            // GA4イベント送信
+            gaTracker.trackSelectItem(
+              facility.id.toString(),
+              facility.name,
+              'nursery',
+              {
+                region: facility.region,
+                facility_type: facility.facilityType,
+                ranking_type: this.currentRanking,
+                overall_ratio: facility.overallRatio
+              }
+            );
+          }
+
           this.scrollToNursery(nurseryId);
         }
       }
@@ -166,6 +209,12 @@ class NurseryDashboard {
 
     // フィルター（保育園を探す）
     document.getElementById('age-filter')?.addEventListener('change', (e) => {
+      // GA4イベント送信
+      gaTracker.trackFilterChange('age', e.target.value, 'search', {
+        selected_age: e.target.value || 'all',
+        filter_text: e.target.options[e.target.selectedIndex].text
+      });
+
       // ランキングの年齢フィルターと同期
       const rankingAgeSelect = document.getElementById('ranking-age-select');
       if (rankingAgeSelect) {
@@ -177,6 +226,12 @@ class NurseryDashboard {
     });
 
     document.getElementById('region-filter')?.addEventListener('change', (e) => {
+      // GA4イベント送信
+      gaTracker.trackFilterChange('region', e.target.value, 'search', {
+        selected_region: e.target.value || 'all',
+        filter_text: e.target.options[e.target.selectedIndex].text
+      });
+
       // ランキングの地域フィルターと同期
       const rankingRegionSelect = document.getElementById('ranking-region-select');
       if (rankingRegionSelect) {
@@ -1063,6 +1118,19 @@ class NurseryDashboard {
 
         // マーカークリック時の処理
         marker.on('click', () => {
+          // GA4イベント送信
+          gaTracker.trackSelectItem(
+            facility.id.toString(),
+            facility.name,
+            'nursery_map',
+            {
+              region: facility.region,
+              facility_type: facility.facilityType,
+              overall_ratio: facility.overallRatio,
+              source: 'map_marker'
+            }
+          );
+
           // モバイル判定（768px以下）
           const isMobile = window.innerWidth <= 768;
 
