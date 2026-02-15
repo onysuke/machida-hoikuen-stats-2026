@@ -493,6 +493,54 @@ section h3 {
 }
 
 /* ランキング */
+.ranking-age-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.ranking-age-filter label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.ranking-age-filter select {
+    padding: 10px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--white);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+}
+
+.ranking-age-filter select:hover {
+    border-color: var(--primary-color);
+}
+
+.ranking-age-filter select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(255, 56, 92, 0.1);
+}
+
+@media (max-width: 768px) {
+    .ranking-age-filter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .ranking-age-filter select {
+        width: 100%;
+    }
+}
+
 .ranking-tabs {
     display: flex;
     gap: 12px;
@@ -629,7 +677,7 @@ section h3 {
 }
 
 .ranking-value.ratio-infinite {
-    color: #9333EA; /* 紫: 無限大 */
+    color: #717171; /* グレー: データなし */
 }
 
 /* もっと見るボタン */
@@ -1383,7 +1431,7 @@ section h3 {
 
 /* 無限大 (データなし) */
 .age-item.ratio-infinite .age-ratio {
-    color: #9333EA !important; /* 紫色 */
+    color: #717171 !important; /* グレー */
 }
 
 /* フッター */

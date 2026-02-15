@@ -155,10 +155,22 @@
             <section class="ranking-section">
                 <h2>保育園ランキング</h2>
 
+                <div class="ranking-age-filter">
+                    <label for="ranking-age-select">年齢:</label>
+                    <select id="ranking-age-select">
+                        <option value="all">全年齢</option>
+                        <option value="0">0歳</option>
+                        <option value="1">1歳</option>
+                        <option value="2">2歳</option>
+                        <option value="3">3歳</option>
+                        <option value="4">4歳</option>
+                        <option value="5">5歳</option>
+                    </select>
+                </div>
+
                 <div class="ranking-tabs">
                     <button class="ranking-tab active" data-ranking="ratio">応募倍率が高い順</button>
                     <button class="ranking-tab" data-ranking="applied">応募数が多い順</button>
-                    <button class="ranking-tab" data-ranking="vacancy">空きが多い順</button>
                 </div>
 
                 <div id="ranking-list" class="ranking-list"></div>
